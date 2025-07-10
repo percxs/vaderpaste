@@ -1,5 +1,5 @@
 local library =
-	loadstring(game:HttpGet("https://github.com/percxs/vaderpaste/blob/main/library"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/percxs/vaderpaste/refs/heads/main/library"))()
 local flags = library.flags -- access flags from here.
 
 local window = library:window({
