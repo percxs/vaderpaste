@@ -3,7 +3,7 @@ local library =
 local flags = library.flags -- access flags from here.
 
 local window = library:window({
-	name = "vaderpaste",
+	name = "project",
 	size = UDim2.fromOffset(500, 650),
 })
 
@@ -853,7 +853,7 @@ do -- Configs
 	})
 	config:keybind({
 		name = "UI Bind",
-		default = Enum.KeyCode.Insert,
+		default = Enum.KeyCode.End,
 		display = "menu",
 		callback = window.set_menu_visibility,
 	})
@@ -983,8 +983,5 @@ do -- Configs
 	library:config_list_update()
 end
 
-for i = 1, 30 do
-	library:notification({ text = "This is a text notification!" })
-end
 
 legit.open_tab()
