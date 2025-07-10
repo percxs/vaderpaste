@@ -853,7 +853,7 @@ do -- Configs
 	})
 	config:keybind({
 		name = "UI Bind",
-		default = Enum.KeyCode.End,
+		default = Enum.KeyCode.Insert,
 		display = "menu",
 		callback = window.set_menu_visibility,
 	})
