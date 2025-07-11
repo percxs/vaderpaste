@@ -1,0 +1,1007 @@
+local library =
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/percxs/vaderpaste/refs/heads/main/library"))()
+local flags = library.flags -- access flags from here.
+
+local window = library:window({
+	name = "project",
+	size = UDim2.fromOffset(500, 650),
+})
+
+local legit = window:tab({ name = "legit" })
+local rage = window:tab({ name = "rage" })
+local esp = window:tab({ name = "esp" })
+local visuals = window:tab({ name = "visuals" })
+local misc = window:tab({ name = "misc" })
+
+do
+	local section = legit:section({ name = "aim assist" })
+	section:toggle({
+		name = "enabled",
+		flag = "legit_aimassist",
+		default = false,
+		tooltip = "master switch for aim assist, helps with aiming by moving your mouse for you based on the below settings",
+	})
+	section:slider({
+		name = "speed",
+		suffix = "%",
+		flag = "legit_aimassistsmoothing",
+		tooltip = "how fast the assist will help aim at the target",
+	})
+	section:dropdown({
+		name = "smoothing",
+		flag = "legit_aimassistsmoothingtype",
+		items = { "exponential", "linear" },
+		multi = false,
+		tooltip = "the type of smoothing of the aim aim assist",
+	})
+	section:slider({
+		name = "randomisation",
+		flag = "legit_aimassistrandomisation",
+		default = 5,
+		min = 0,
+		max = 20,
+		tooltip = "the randomisation of where the aim assist will be trying to aim at",
+	})
+	section:slider({
+		name = "enemy switching delay",
+		suffix = "ms",
+		flag = "legit_aimassistswitchdelay",
+		default = 100,
+		min = 0,
+		max = 2000,
+		tooltip = "how long the aim assist will wait before locking onto a new player",
+	})
+	section:slider({
+		name = "maximum lock-on time",
+		suffix = "ms",
+		flag = "legit_aimassistlockontime",
+		default = 1000,
+		min = 1,
+		max = 2001,
+		custom = { ["2001"] = "inf" },
+		tooltip = "how long the aim assist will aim at a single target",
+	})
+	section:slider({
+		name = "accuracy",
+		suffix = "%",
+		flag = "legit_aimassistaccuracy",
+		default = 90,
+		min = 0,
+		max = 100,
+		tooltip = "the chance that the hitscan priority will be considered before anything else",
+	})
+	section:dropdown({
+		name = "activation",
+		flag = "legit_aimassistactivation",
+		items = { "mouse 1", "mouse 2", "always" },
+		multi = false,
+		callback = function(option)
+		end,
+	})
+	section:dropdown({
+		name = "target priority",
+		flag = "legit_aimassisttargpriority",
+		items = { "closest", "enemy look direction" },
+		multi = false,
+		tooltip = "the player that the aim assist will consider aiming at first",
+	})
+	section:dropdown({
+		name = "hitscan priority",
+		flag = "legit_aimassistpriority",
+		items = { "closest", "head", "body" },
+		multi = false,
+		tooltip = "the hitbox that the aim assist will consider aiming at first",
+	})
+	section:dropdown({
+		name = "hitscan points",
+		flag = "legit_aimassistpoints",
+		items = { "head", "body", "arms", "legs" },
+		multi = true,
+		tooltip = "the hitboxes that the aim assist will consider at all",
+	})
+	section:toggle({
+		name = "require mouse movement",
+		flag = "legit_aimonmousemove",
+		default = false,
+		tooltip = "requires you to be moving your mouse for the aim assist to assist your aim",
+	})
+	section:toggle({
+		name = "require mouse nearing enemy",
+		flag = "legit_aimonmousemoveatenemy",
+		default = false,
+		tooltip = "requires you to be moving your mouse towards the enemy for the aim assist to assist your aim",
+	})
+	section:toggle({
+		name = "use barrel fov",
+		flag = "legit_aimassistbarrelfov",
+		default = false,
+		tooltip = "bases fov from your barrel direction instead of camera direction",
+	})
+	section:toggle({
+		name = "adjust for bullet drop",
+		flag = "legit_bulletcompensation",
+		default = false,
+		tooltip = "will predict the bullet drop to a target once found and will compensate for it",
+	})
+	section:slider({
+		name = "drop prediction inaccuracy",
+		suffix = "%",
+		flag = "legit_bulletdropaccuracy",
+		default = 90,
+		min = 0,
+		max = 100,
+		interval = 0.5,
+		callback = function(num)
+		end,
+	})
+	section:toggle({
+		name = "adjust for target movement",
+		flag = "legit_movementcompensation",
+		default = false,
+		tooltip = "will predict the movement of the target and will compensate for it",
+	})
+	section:slider({
+		name = "target prediction inaccuracy",
+		suffix = "%",
+		flag = "legit_movementtaccuracy",
+		default = 80,
+		min = 0,
+		max = 100,
+		tooltip = "how accurate the movement prediction adjustment is",
+	})
+	section:toggle({
+		name = "adjust for barrel angle",
+		flag = "legit_barrelcompensation",
+		default = false,
+		tooltip = "will predict where the bullet will be based off of your barrel and will assist you in pointing your barrel towards the enemy, helps with quickscoping and recoil control",
+	})
+	section:slider({
+		name = "barrel adjustment inaccuracy",
+		suffix = "%",
+		flag = "legit_barrelaccuracy",
+		default = 60,
+		min = 0,
+		max = 100,
+		tooltip = "how accurate the barrel angle adjustment is",
+	})
+
+	local section = legit:section({ name = "silent aim", side = "right" })
+	section:toggle({
+		name = "silent aim",
+		flag = "legit_bulletredirection",
+		default = false,
+		tooltip = "master switch for silent aim, helps with aiming by automatically redirecting bullets based on the below settings",
+	})
+	section:slider({
+		name = "silent aim fov",
+		suffix = "°",
+		flag = "legit_bulletredirectionfov",
+		default = 15,
+		min = 0,
+		max = 90,
+		tooltip = "the maximum fov of the silent aim, enemies within this fov will be considered and aimed at by the silent aim",
+	})
+	section:slider({
+		name = "spread",
+		suffix = "/10st",
+		flag = "legit_bulletredirectiondeviation",
+		default = 8,
+		min = 0,
+		max = 80,
+		custom = { ["0"] = "off" },
+		tooltip = "shoots around your enemy rather than the direct center of the hitbox to prevent shooting in a perfect line every time which can look blatant. the slider will determine (in studs) how much spread there will be at exactly 100 studs, scales linearly with distance. at 200 studs the amount of spread doubles and at 50 studs the amount is halved",
+	})
+	section:slider({
+		name = "hit chance",
+		suffix = "%",
+		flag = "legit_bulletredirectionhitchance",
+		default = 30,
+		min = 0,
+		max = 100,
+		tooltip = "the chance that the silent aim will attempt to redirect a bullet",
+	})
+	section:slider({
+		name = "accuracy",
+		suffix = "%",
+		flag = "legit_bulletredirectionaccuracy",
+		default = 70,
+		min = 0,
+		max = 100,
+		tooltip = "the chance that the hitscan priority will be considered before anything else",
+	})
+	section:dropdown({
+		name = "hitscan priority",
+		flag = "legit_bulletredirectionpriority",
+		items = { "closest", "head", "body" },
+		multi = false,
+		tooltip = "the hitbox that the silent aim will consider aiming at first",
+	})
+	section:dropdown({
+		name = "hitscan points",
+		flag = "legit_bulletredirectionpoints",
+		items = { "head", "body", "arms", "legs" },
+		multi = true,
+		tooltip = "the hitboxes that the silent aim will consider at all ",
+	})
+	section:toggle({
+		name = "use barrel fov",
+		flag = "legit_silentbarrelfov",
+		default = false,
+		tooltip = "bases fov from your barrel instead of camera",
+	})
+	section:toggle({
+		name = "auto wallbang",
+		flag = "legit_bulletredirectionwallbang",
+		default = false,
+		tooltip = "will target enemies that can be wallbanged",
+	})
+	section:toggle({
+		name = "instant hit",
+		flag = "legit_silentinstanthit",
+		default = false,
+		tooltip = "instantly hits your shots. not garunteed to be undetected",
+	})
+
+	local section = legit:section({ name = "triggerbot", side = "right" })
+	section:toggle({
+		subsection = "trigger bot",
+		name = "enabled",
+		flag = "legit_triggerbot",
+		default = false,
+		tooltip = "master switch for trigger bot, helps with shooting by automatically clicking when an enemy intersects your bullet path",
+	})
+	section:slider({
+		subsection = "trigger bot",
+		name = "reaction time",
+		suffix = "ms",
+		flag = "legit_triggerbotspeed",
+		default = 120,
+		min = 0,
+		max = 400,
+		custom = { ["0"] = "off" },
+		tooltip = "how long an enemy must intersect your bullet path before automatically clicking",
+	})
+	section:dropdown({
+		subsection = "trigger bot",
+		name = "triggerbot hitboxes",
+		flag = "legit_triggerbotpoints",
+		items = { "head", "body", "arms", "legs" },
+		multi = true,
+		tooltip = "the hitboxes that the triggerbot will automatically click on",
+	})
+	section:toggle({
+		subsection = "trigger bot",
+		name = "auto wallbang",
+		flag = "legit_triggerbotautowall",
+		default = false,
+		tooltip = "will automatically click when someone can be wallbanged by your bullet path",
+	})
+	section:toggle({
+		subsection = "trigger bot",
+		name = "magnet triggerbot",
+		flag = "legit_magnet",
+		default = false,
+		tooltip = "master switch for the magnet, helps with aiming by applying a custom fov, smoothing and hitscan priority to the aim assist on triggerbot keybind",
+	})
+	section:slider({
+		subsection = "trigger bot",
+		name = "magnet fov",
+		suffix = "°",
+		flag = "legit_magnetfov",
+		default = 80,
+		min = 0,
+		max = 180,
+		tooltip = "the maximum fov of the aim assist when the magnet triggerbot is active",
+	})
+	section:slider({
+		subsection = "trigger bot",
+		name = "magnet speed",
+		suffix = "%",
+		flag = "legit_magnetsmoothing",
+		default = 10,
+		min = 0,
+		max = 100,
+		tooltip = "the smoothness of the aim assist when the magnet triggerbot is active",
+	})
+	section:dropdown({
+		subsection = "trigger bot",
+		name = "magnet priority",
+		flag = "legit_magnetnpriority",
+		items = { "closest", "head", "body" },
+		multi = false,
+		tooltip = "the hitscan priority of the aim assist when the magnet triggerbot is active",
+	})
+end
+
+do
+	-- Enemy ESP Section (refactored for conciseness)
+	local enemy = esp:section({ name = "enemy", fill = 0.5 })
+
+	local function addToggle(name, flag, tooltip, opts)
+		opts = opts or {}
+		enemy:toggle({
+			name = name,
+			flag = flag,
+			default = opts.default or false,
+			tooltip = tooltip,
+			color = opts.color,
+			colorflag = opts.colorflag,
+			transparency = opts.transparency,
+			transparencyflag = opts.transparencyflag,
+			colorcallback = opts.colorcallback
+		})
+	end
+
+	local function addColor(object, flag, color, cb, opts)
+		opts = opts or {}
+		enemy:colorpicker({
+			object = object,
+			flag = flag,
+			color = color,
+			transparency = opts.transparency,
+			callback = cb
+		})
+	end
+
+	addToggle("enabled", "enemy_esp", "enables enemy esp")
+	addToggle("bounding box", "enemy_box", "shows enemy boxes", {
+		color = Color3.new(1, 0, 0),
+		colorflag = "enemy_boxcolor",
+		transparency = 0.7,
+		transparencyflag = "enemy_boxcolor_transparency",
+		colorcallback = function(color, transparency)
+			flags["enemy_boxcolor"] = color
+			flags["enemy_boxcolor_transparency"] = transparency
+		end
+	})
+	addToggle("filled bounding box", "enemy_filledbox", "fills enemy boxes")
+	addColor("filled bounding box (primary)", "enemy_filledboxcolor", Color3.new(0, 1, 0), function(color, transparency) flags["enemy_filledboxcolor"] = color; flags["enemy_filledboxcolor_transparency"] = transparency end, {transparency = 0.7})
+	addColor("filled bounding box (secondary)", "enemy_filledboxcolor2", Color3.new(0, 0.7, 0), function(color, transparency) flags["enemy_filledboxcolor2"] = color; flags["enemy_filledboxcolor2_transparency"] = transparency end, {transparency = 0.7})
+	addToggle("health bar", "enemy_healthbar", "shows enemy health bars")
+	addColor("health bar", "enemy_lowhealth", Color3.fromRGB(255, 100, 100), function(color) flags["enemy_lowhealth"] = color end)
+	addColor("health bar", "enemy_fullhealth", Color3.fromRGB(100, 255, 100), function(color) flags["enemy_fullhealth"] = color end)
+	addToggle("health number", "enemy_healthnumber", "shows enemy health values")
+	addColor("health number", "enemy_healthnumbercolor", Color3.new(1, 1, 1), function(color) flags["enemy_healthnumbercolor"] = color end)
+	addToggle("display name", "enemy_name", "shows enemy names")
+	addColor("display name", "enemy_namecolor", Color3.new(1, 1, 1), function(color) flags["enemy_namecolor"] = color end)
+	addToggle("held weapon", "enemy_heldweapon", "shows the enemies held weapon")
+	addColor("held weapon", "enemy_heldweaponcolor", Color3.new(1, 1, 1), function(color) flags["enemy_heldweaponcolor"] = color end)
+	addToggle("distance", "enemy_distance", "shows the distance to the enemy")
+	addColor("distance", "enemy_distancecolor", Color3.new(1, 1, 1), function(color) flags["enemy_distancecolor"] = color end)
+	addToggle("visible", "enemy_visible", "shows if a enemy is visible")
+	addColor("visible", "enemy_visiblecolor", Color3.new(1, 1, 1), function(color) flags["enemy_visiblecolor"] = color end)
+	addToggle("chams", "enemy_chams", "shows enemy chams")
+	addColor("chams", "enemy_innerchamcolor", Color3.fromRGB(100, 0, 0), function(color, transparency) flags["enemy_innerchamcolor"] = color; flags["enemy_innerchamcolor_transparency"] = transparency end, {transparency = 155/255})
+	addToggle("skeleton", "enemy_skeleton", "shows enemy skeletons")
+	addColor("skeleton", "enemy_skeletoncolor", Color3.fromRGB(236, 251, 136), function(color) flags["enemy_skeletoncolor"] = color end)
+	addToggle("snap lines", "enemy_snaplines", "shows enemy snap lines")
+	addColor("snap lines", "enemy_snaplinescolor", Color3.new(1, 1, 1), function(color, transparency) flags["enemy_snaplinescolor"] = color; flags["enemy_snaplinescolor_transparency"] = transparency end, {transparency = 0})
+	addToggle("view angle", "enemy_viewangle", "shows a line in the direction the enemy is looking")
+	addColor("view angle", "enemy_viewanglecolor", Color3.new(1, 1, 1), function(color) flags["enemy_viewanglecolor"] = color end)
+	addToggle("head dot", "enemy_headdot", "shows a circle at which shooting at will result in a headshot")
+	addColor("head dot", "enemy_headdotcolor", Color3.new(1, 0, 0), function(color) flags["enemy_headdotcolor"] = color end)
+	addToggle("out of view", "enemy_oov", "shows an arrow pointing towards an enemy if they are not in view")
+	addColor("out of view", "enemy_oovcolor", Color3.new(1, 1, 1), function(color) flags["enemy_oovcolor"] = color end)
+
+	local selfesp = esp:section({ name = "self-esp", side = "right" })
+	local esp_settings = esp:section({ name = "esp settings", fill = 0.1, side = "right" })
+
+	selfesp:toggle({ name = "enabled", flag = "self_esp", default = false, tooltip = "enables self esp" })
+	selfesp:toggle({ name = "bounding box", flag = "self_box", default = false, tooltip = "shows self bounding box" })
+	selfesp:colorpicker({ object = "bounding box", flag = "self_boxcolor", color = Color3.new(0, 1, 0), callback = function(color) flags["self_boxcolor"] = color end })
+	selfesp:toggle({ name = "filled bounding box", flag = "self_filledbox", default = false, tooltip = "fills self bounding box" })
+	selfesp:colorpicker({ object = "filled bounding box (primary)", flag = "self_filledboxcolor", color = Color3.new(0, 1, 0), transparency = 0.7, callback = function(color, transparency) flags["self_filledboxcolor"] = color; flags["self_filledboxcolor_transparency"] = transparency end })
+	selfesp:colorpicker({ object = "filled bounding box (secondary)", flag = "self_filledboxcolor2", color = Color3.new(0, 0.7, 0), transparency = 0.7, callback = function(color, transparency) flags["self_filledboxcolor2"] = color; flags["self_filledboxcolor2_transparency"] = transparency end })
+	selfesp:toggle({ name = "health bar", flag = "self_healthbar", default = false, tooltip = "shows self health bars" })
+	selfesp:colorpicker({ object = "health bar", flag = "self_lowhealth", color = Color3.fromRGB(255, 100, 100), callback = function(color) flags["self_lowhealth"] = color end })
+	selfesp:colorpicker({ object = "health bar", flag = "self_fullhealth", color = Color3.fromRGB(100, 255, 100), callback = function(color) flags["self_fullhealth"] = color end })
+	selfesp:toggle({ name = "health number", flag = "self_healthnumber", default = false, tooltip = "shows self health values" })
+	selfesp:colorpicker({ object = "health number", flag = "self_healthnumbercolor", color = Color3.new(1, 1, 1), callback = function(color) flags["self_healthnumbercolor"] = color end })
+	selfesp:toggle({ name = "display name", flag = "self_name", default = false, tooltip = "shows self names" })
+	selfesp:colorpicker({ object = "display name", flag = "self_namecolor", color = Color3.new(1, 1, 1), callback = function(color) flags["self_namecolor"] = color end })
+	selfesp:toggle({ name = "held weapon", flag = "self_heldweapon", default = false, tooltip = "shows self held weapon" })
+	selfesp:colorpicker({ object = "held weapon", flag = "self_heldweaponcolor", color = Color3.new(1, 1, 1), callback = function(color) flags["self_heldweaponcolor"] = color end })
+	selfesp:toggle({ name = "distance", flag = "self_distance", default = false, tooltip = "shows the distance to self" })
+	selfesp:colorpicker({ object = "distance", flag = "self_distancecolor", color = Color3.new(1, 1, 1), callback = function(color) flags["self_distancecolor"] = color end })
+	selfesp:toggle({ name = "visible", flag = "self_visible", default = false, tooltip = "shows if self is visible" })
+	selfesp:colorpicker({ object = "visible", flag = "self_visiblecolor", color = Color3.new(1, 1, 1), callback = function(color) flags["self_visiblecolor"] = color end })
+	selfesp:toggle({ name = "chams", flag = "self_chams", default = false, tooltip = "shows self chams" })
+	selfesp:colorpicker({ object = "chams", flag = "self_innerchamcolor", color = Color3.fromRGB(0, 100, 0), transparency = 155 / 255, callback = function(color, transparency) flags["self_innerchamcolor"] = color; flags["self_innerchamcolor_transparency"] = transparency end })
+	selfesp:toggle({ name = "skeleton", flag = "self_skeleton", default = false, tooltip = "shows self skeletons" })
+	selfesp:colorpicker({ object = "skeleton", flag = "self_skeletoncolor", color = Color3.fromRGB(236, 251, 136), callback = function(color) flags["self_skeletoncolor"] = color end })
+	selfesp:toggle({ name = "snap lines", flag = "self_snaplines", default = false, tooltip = "shows self snap lines" })
+	selfesp:colorpicker({ object = "snap lines", flag = "self_snaplinescolor", color = Color3.new(1, 1, 1), transparency = 0, callback = function(color, transparency) flags["self_snaplinescolor"] = color; flags["self_snaplinescolor_transparency"] = transparency end })
+	selfesp:toggle({ name = "view angle", flag = "self_viewangle", default = false, tooltip = "shows a line in the direction self is looking" })
+	selfesp:colorpicker({ object = "view angle", flag = "self_viewanglecolor", color = Color3.new(1, 1, 1), callback = function(color) flags["self_viewanglecolor"] = color end })
+	selfesp:toggle({ name = "head dot", flag = "self_headdot", default = false, tooltip = "shows a circle at which shooting at will result in a headshot" })
+	selfesp:colorpicker({ object = "head dot", flag = "self_headdotcolor", color = Color3.new(0, 1, 0), callback = function(color) flags["self_headdotcolor"] = color end })
+	selfesp:toggle({ name = "out of view", flag = "self_oov", default = false, tooltip = "shows an arrow pointing towards self if they are not in view" })
+	selfesp:colorpicker({ object = "out of view", flag = "self_oovcolor", color = Color3.new(1, 1, 1), callback = function(color) flags["self_oovcolor"] = color end })
+
+	esp_settings:dropdown({
+		name = "text case",
+		flag = "espsettings_case",
+		items = { "lowercase", "UPPERCASE", "Normal" },
+		multi = false,
+		tooltip = "the case of the main text",
+	})
+	esp_settings:slider({
+		name = "text size",
+		flag = "espsettings_size",
+		value = 13,
+		minimum = 1,
+		maximum = 40,
+		tooltip = "the size of the main text",
+		})
+end
+
+do -- Visuals
+	local section = visuals:section({ name = "local", fill = 0.2 })
+	section:toggle({
+		name = "Toggle",
+		flag = "ToggleFlag",
+		default = false,
+		callback = function(bool)
+		end,
+	})
+	section:slider({ name = "arm reflectance", min = 0, max = 100, default = 0, interval = 1 })
+	section:dropdown({ name = "arm material", items = { "ghost", "solid", "wireframe" }, default = "ghost" })
+	section:toggle({ name = "weapon chams" })
+	section:slider({ name = "weapon reflectance", min = 0, max = 100, default = 0, interval = 1 })
+	section:dropdown({ name = "weapon material", items = { "ghost", "solid", "wireframe" }, default = "ghost" })
+	section:toggle({ name = "local chams" })
+	section:dropdown({ name = "local material", items = { "ghost", "solid", "wireframe" }, default = "ghost" })
+	section:dropdown({ name = "arm animation", items = { "off", "wave", "spin" }, default = "off" })
+	section:dropdown({ name = "weapon animation", items = { "off", "wave", "spin" }, default = "off" })
+	section:dropdown({ name = "local animation", items = { "off", "wave", "spin" }, default = "off" })
+
+	local camera = visuals:section({ name = "camera", side = "right" })
+	camera:slider({ name = "camera fov", min = 0, max = 120, default = 90, interval = 1 })
+	camera:slider({ name = "horizontal aspect ratio", min = 0, max = 200, default = 100, interval = 1 })
+	camera:slider({ name = "vertical aspect ratio", min = 0, max = 200, default = 100, interval = 1 })
+	camera:toggle({ name = "remove camera bob" })
+	camera:toggle({ name = "remove ads fov" })
+	camera:toggle({ name = "remove visual suppression" })
+	camera:toggle({ name = "reduce camera recoil" })
+	camera:slider({ name = "camera recoil reduction", min = 0, max = 100, default = 0, interval = 1 })
+	camera:toggle({ name = "third person" })
+	camera:slider({ name = "third person distance", min = 0, max = 200, default = 100, interval = 1 })
+
+	local world = visuals:section({ name = "world", side = "right", fill = 0.2 })
+	world:toggle({ name = "ambient" })
+	world:colorpicker({ color = Color3.fromRGB(128, 128, 255), alpha = 1 })
+	world:colorpicker({ color = Color3.fromRGB(128, 128, 255), alpha = 1 })
+	world:slider({ name = "time of day", min = 0, max = 24, default = 6, interval = 1 })
+	world:toggle({ name = "local bullet tracers" }):colorpicker({ color = Color3.fromHex("#C94536"), alpha = 1 })
+	world:toggle({ name = "enemy bullet tracers" }):colorpicker({ color = Color3.fromHex("#C94536"), alpha = 1 })
+	world:slider({ name = "bullet tracer time", min = 0, max = 10, default = 4, interval = 1 })
+	world:toggle({ name = "hit chams" })
+	world:slider({ name = "hit cham time", min = 0, max = 10, default = 2, interval = 1 })
+	world:dropdown({ name = "hit chams material", items = { "ghost", "solid", "wireframe" }, default = "ghost" })
+	world:dropdown({ name = "brightness mode", items = { "dimmed", "bright", "default" }, default = "dimmed" })
+	world:toggle({ name = "teleporting lines" }):colorpicker({ color = Color3.fromRGB(168, 232, 65), alpha = 1 })
+	world:toggle({ name = "show fake position" })
+	world:toggle({ name = "show fov" })
+	world:colorpicker({ color = Color3.fromHex("#7F48A3"), alpha = 1 })
+	world:colorpicker({ color = Color3.fromHex("#646464"), alpha = 1 })
+	world:colorpicker({ color = Color3.fromHex("#A3487F"), alpha = 1 })
+	world:colorpicker({ color = Color3.fromHex("#FF3C00"), alpha = 1 })
+	world:toggle({ name = "custom skybox" })
+
+	local viewmodel = visuals:section({ name = "viewmodel" })
+	viewmodel:toggle({ name = "offset viewmodel" })
+	viewmodel:slider({ name = "offset x", min = -200, max = 200, default = 180, interval = 1 })
+	viewmodel:slider({ name = "offset y", min = -200, max = 200, default = 180, interval = 1 })
+	viewmodel:slider({ name = "offset z", min = -200, max = 200, default = 180, interval = 1 })
+	viewmodel:slider({ name = "pitch", min = -180, max = 180, default = 180, interval = 1 })
+	viewmodel:slider({ name = "yaw", min = -180, max = 180, default = 180, interval = 1 })
+	viewmodel:slider({ name = "roll", min = -180, max = 180, default = 180, interval = 1 })
+end
+
+do -- Configs
+	local configs = window:tab({ name = "configs" })
+	local config = configs:section({ name = "Theming System", side = "right" })
+	config:toggle({
+		name = "Keybind List",
+		flag = "keybind_list",
+		default = false,
+		callback = function(bool)
+			window.toggle_list(bool)
+		end,
+	})
+	config:toggle({
+		name = "Player List",
+		flag = "player_list",
+		default = false,
+		callback = function(bool)
+			window.toggle_playerlist(bool)
+		end,
+	})
+	config:toggle({
+		name = "Watermark",
+		flag = "watermark",
+		default = false,
+		callback = function(bool)
+			window.toggle_watermark(bool)
+		end,
+	})
+	config:keybind({
+		name = "UI Bind",
+		default = Enum.KeyCode.End,
+		display = "menu",
+		callback = window.set_menu_visibility,
+	})
+	config:slider({
+		name = "Colorpicker Animation Speed",
+		flag = "color_picker_anim_speed",
+		min = 0,
+		max = 5,
+		default = 2,
+		interval = 0.01,
+		suffix = "",
+	})
+	config:colorpicker({
+		color = Color3.fromHex("#6464FF"),
+		flag = "accent",
+		callback = function(color)
+			library:update_theme("accent", color)
+		end,
+	})
+	config:button({
+		name = "Copy JobId",
+		callback = function()
+			setclipboard(game.JobId)
+		end,
+	})
+	config:button({
+		name = "Copy GameID",
+		callback = function()
+			setclipboard(game.GameId)
+		end,
+	})
+	config:button({
+		name = "Copy Join Script",
+		callback = function()
+			setclipboard(
+				'game:GetService("TeleportService"):TeleportToPlaceInstance('
+					.. game.PlaceId
+					.. ', "'
+					.. game.JobId
+					.. '", game.Players.LocalPlayer)'
+			)
+		end,
+	})
+	config:button({
+		name = "Rejoin",
+		callback = function()
+			game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, game.JobId, lp)
+		end,
+	})
+
+	local configs_section = configs:section({ name = "Configuration System", side = "left" })
+	local dir = library.directory .. "/configs/"
+	library.config_holder = configs_section:dropdown({ name = "Configs", items = {}, flag = "config_name_list" })
+	configs_section:textbox({ flag = "config_name_text_box" })
+	configs_section:button({
+		name = "Create",
+		callback = function()
+			writefile(dir .. flags["config_name_text_box"] .. ".cfg", library:get_config())
+			library:config_list_update()
+		end,
+	})
+	configs_section:button({
+		name = "Delete",
+		callback = function()
+			library:panel({
+				name = "Are you sure you want to delete " .. flags["config_name_list"] .. " ?",
+				options = { "Yes", "No" },
+				callback = function(option)
+					if option == "Yes" then
+						delfile(dir .. flags["config_name_list"] .. ".cfg")
+						library:config_list_update()
+					end
+				end,
+			})
+		end,
+	})
+	configs_section:button({
+		name = "Load",
+		callback = function()
+			library:load_config(readfile(dir .. flags["config_name_list"] .. ".cfg"))
+		end,
+	})
+	configs_section:button({
+		name = "Save",
+		callback = function()
+			writefile(dir .. flags["config_name_text_box"] .. ".cfg", library:get_config())
+			library:config_list_update()
+		end,
+	})
+	configs_section:button({
+		name = "Unload Config",
+		callback = function()
+			library:load_config(old_config)
+		end,
+	})
+	configs_section:button({
+		name = "Unload Menu",
+		callback = function()
+			library:unload()
+		end,
+	})
+
+	configs:hitpart_picker({
+		name = "Multihitpart Picker",
+		side = "left",
+		flag = "multihitpart_picker",
+		default = { "Head" },
+		multi = true,
+		type = "R6",
+		callback = function(parts)
+			-- removed print
+		end,
+	})
+	configs:hitpart_picker({
+		name = "Singlehitpart Picker",
+		side = "right",
+		flag = "singlehitpart_picker",
+		default = { "Head" },
+		multi = false,
+		type = "R15",
+		callback = function(parts)
+			-- removed print
+		end,
+	})
+
+	library:config_list_update()
+end
+
+--// ESP Drawing Logic Integration (from projectESP.txt, adapted for UI flags)
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+local drawings = {}
+local healthBarHeights = {}
+local function removeDrawings(player)
+    if drawings[player] then
+        for _, obj in pairs(drawings[player]) do
+            if typeof(obj) == "table" then
+                for _, sub in pairs(obj) do pcall(function() sub:Remove() end) end
+            else
+                pcall(function() obj:Remove() end)
+            end
+        end
+        drawings[player] = nil
+    end
+end
+local function createDrawings(player)
+    removeDrawings(player)
+    drawings[player] = {
+        HealthBarBG = Drawing.new("Square"),
+        Box = Drawing.new("Square"),
+        FilledBoxSlices = {},
+        HealthBar = Drawing.new("Square"),
+        HealthNumber = Drawing.new("Text"),
+        Name = Drawing.new("Text"),
+        Weapon = Drawing.new("Text"),
+        Distance = Drawing.new("Text"),
+        SnapLine = Drawing.new("Line"),
+        HeadDot = Drawing.new("Circle"),
+        Chams = {},
+        Skeleton = {},
+    }
+    drawings[player].HealthBarBG.Filled = true
+    drawings[player].HealthBarBG.Color = Color3.fromRGB(0,0,0)
+    drawings[player].HealthBarBG.Transparency = 1
+end
+local function getHealthGradientColor(ratio)
+    if ratio > 0.5 then
+        local t = (ratio - 0.5) * 2
+        return Color3.new(1 - t, 1, 0)
+    else
+        local t = ratio * 2
+        return Color3.new(1, t, 0)
+    end
+end
+local function lerp(a, b, t)
+    return a + (b - a) * t
+end
+local function clamp01(x)
+    return math.max(0, math.min(1, x))
+end
+RunService.RenderStepped:Connect(function()
+    local currentPlayers = {}
+    for _, player in ipairs(Players:GetPlayers()) do
+        currentPlayers[player] = true
+        local isEnemy = (flags["enemy_esp"] and player ~= LocalPlayer)
+        local isSelf = (flags["self_esp"] and player == LocalPlayer)
+        if not (isEnemy or isSelf) then removeDrawings(player); healthBarHeights[player] = nil; continue end
+        if not drawings[player] then createDrawings(player) end
+        local char = player.Character
+        if not char then removeDrawings(player); healthBarHeights[player] = nil; continue end
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local head = char:FindFirstChild("Head")
+        local humanoid = char:FindFirstChildOfClass("Humanoid")
+        if not hrp or not head or not humanoid then removeDrawings(player); healthBarHeights[player] = nil; continue end
+        local screenPos, onScreen = Camera:WorldToViewportPoint(hrp.Position)
+        if not onScreen or humanoid.Health <= 0 then removeDrawings(player); healthBarHeights[player] = nil; continue end
+        local min, max = Vector2.new(math.huge, math.huge), Vector2.new(-math.huge, -math.huge)
+        for _, part in ipairs(char:GetChildren()) do
+            if part:IsA("BasePart") then
+                for _, offset in ipairs({
+                    Vector3.new( part.Size.X/2,  part.Size.Y/2,  part.Size.Z/2),
+                    Vector3.new(-part.Size.X/2,  part.Size.Y/2,  part.Size.Z/2),
+                    Vector3.new( part.Size.X/2, -part.Size.Y/2,  part.Size.Z/2),
+                    Vector3.new(-part.Size.X/2, -part.Size.Y/2,  part.Size.Z/2),
+                    Vector3.new( part.Size.X/2,  part.Size.Y/2, -part.Size.Z/2),
+                    Vector3.new(-part.Size.X/2,  part.Size.Y/2, -part.Size.Z/2),
+                    Vector3.new( part.Size.X/2, -part.Size.Y/2, -part.Size.Z/2),
+                    Vector3.new(-part.Size.X/2, -part.Size.Y/2, -part.Size.Z/2),
+                }) do
+                    local world = part.CFrame:PointToWorldSpace(offset)
+                    local pos, vis = Camera:WorldToViewportPoint(world)
+                    if vis then
+                        min = Vector2.new(math.min(min.X, pos.X), math.min(min.Y, pos.Y))
+                        max = Vector2.new(math.max(max.X, pos.X), math.max(max.Y, pos.Y))
+                    end
+                end
+            end
+        end
+        local boxPos, boxSize = min, max - min
+        local prefix = isEnemy and "enemy_" or "self_"
+        -- Bounding Box
+        local box = drawings[player].Box
+        box.Visible = (isEnemy and flags["enemy_esp"] and flags["enemy_box"]) or (isSelf and flags["self_esp"] and flags["self_box"]) or false
+        box.Position = boxPos
+        box.Size = boxSize
+        box.Color = flags[prefix.."boxcolor"] or Color3.new(1, 0, 0)
+        box.Thickness = 1
+        box.Filled = false
+        -- Filled Box Gradient
+        local slices = drawings[player].FilledBoxSlices
+        local numSlices = 592
+        -- Remove excess slices if present
+        while #slices > numSlices do
+            local slice = table.remove(slices)
+            pcall(function() slice:Remove() end)
+        end
+        -- Create missing slices
+        while #slices < numSlices do
+            local slice = Drawing.new("Square")
+            slice.Filled = true
+            table.insert(slices, slice)
+        end
+        local color1 = flags[prefix.."filledboxcolor"] or Color3.new(0, 1, 0)
+        local color2 = flags[prefix.."filledboxcolor2"] or color1
+        local trans1 = flags[prefix.."filledboxcolor_transparency"] or 0.7
+        local trans2 = flags[prefix.."filledboxcolor2_transparency"] or trans1
+        local visible = flags[prefix.."filledbox"] or false
+        for i = 1, numSlices do
+            local t = (i-1)/(numSlices-1)
+            local color = Color3.new(
+                color1.r + (color2.r - color1.r) * t,
+                color1.g + (color2.g - color1.g) * t,
+                color1.b + (color2.b - color1.b) * t
+            )
+            local trans = trans1 + (trans2 - trans1) * t
+            trans = math.max(trans, 0.1) -- Clamp to minimum 0.1 for visibility
+            local slice = slices[i]
+            slice.Visible = visible
+            slice.Color = color
+            slice.Transparency = 1 - clamp01(trans)
+            slice.Position = Vector2.new(boxPos.X, boxPos.Y + boxSize.Y * (i-1)/numSlices)
+            slice.Size = Vector2.new(boxSize.X, boxSize.Y/numSlices)
+            slice.Filled = true
+        end
+        -- Health Bar
+        local healthBar = drawings[player].HealthBar
+        local bg = drawings[player].HealthBarBG
+        bg.Visible = flags[prefix.."healthbar"] or false
+        local fullHeight = boxSize.Y
+        bg.Size = Vector2.new(3, fullHeight)
+        bg.Position = Vector2.new(boxPos.X - 6, boxPos.Y)
+        healthBar.Visible = flags[prefix.."healthbar"] or false
+        local healthRatio = math.clamp(humanoid.Health / humanoid.MaxHealth, 0, 1)
+        local targetHeight = fullHeight * healthRatio
+        local prevHeight = healthBarHeights[player] or targetHeight
+        local newHeight = lerp(prevHeight, targetHeight, 0.25)
+        healthBarHeights[player] = newHeight
+        healthBar.Size = Vector2.new(3, newHeight)
+        healthBar.Position = Vector2.new(boxPos.X - 6, boxPos.Y + (fullHeight - newHeight))
+        healthBar.Color = (healthRatio > 0.5 and flags[prefix.."fullhealth"] or flags[prefix.."lowhealth"]) or getHealthGradientColor(healthRatio)
+        healthBar.Filled = true
+        healthBar.Transparency = 1
+        -- Health Number
+        local healthNum = drawings[player].HealthNumber
+        healthNum.Visible = flags[prefix.."healthnumber"] or false
+        healthNum.Text = tostring(math.floor(humanoid.Health))
+        healthNum.Position = Vector2.new(boxPos.X - 20, boxPos.Y + boxSize.Y/2 - 8)
+        healthNum.Size = 13
+        healthNum.Color = flags[prefix.."healthnumbercolor"] or Color3.new(1, 1, 1)
+        healthNum.Center = false
+        healthNum.Outline = true
+        -- Display Name
+        local name = drawings[player].Name
+        name.Visible = flags[prefix.."name"] or false
+        name.Text = player.DisplayName or player.Name
+        name.Position = Vector2.new(boxPos.X + boxSize.X/2, boxPos.Y - 16)
+        name.Size = 13
+        name.Color = flags[prefix.."namecolor"] or Color3.new(1, 1, 1)
+        name.Center = true
+        name.Outline = true
+        -- Held Weapon
+        local weapon = drawings[player].Weapon
+        weapon.Visible = flags[prefix.."heldweapon"] or false
+        local tool = char:FindFirstChildOfClass("Tool")
+        weapon.Text = tool and tool.Name or ""
+        weapon.Position = Vector2.new(boxPos.X + boxSize.X/2, boxPos.Y + boxSize.Y + 2)
+        weapon.Size = 13
+        weapon.Color = flags[prefix.."heldweaponcolor"] or Color3.new(1, 1, 1)
+        weapon.Center = true
+        weapon.Outline = true
+        -- Distance
+        local dist = drawings[player].Distance
+        dist.Visible = flags[prefix.."distance"] or false
+        local myHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        local distance = myHRP and (hrp.Position - myHRP.Position).Magnitude or 0
+        dist.Text = tostring(math.floor(distance)) .. " studs"
+        dist.Position = Vector2.new(boxPos.X + boxSize.X/2, boxPos.Y + boxSize.Y + 16)
+        dist.Size = 13
+        dist.Color = flags[prefix.."distancecolor"] or Color3.new(1, 1, 1)
+        dist.Center = true
+        dist.Outline = true
+        -- Snap Line
+        local snap = drawings[player].SnapLine
+        snap.Visible = flags[prefix.."snaplines"] or false
+        snap.From = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y)
+        snap.To = Vector2.new(boxPos.X + boxSize.X/2, boxPos.Y + boxSize.Y)
+        snap.Color = flags[prefix.."snaplinescolor"] or Color3.new(1, 1, 1)
+        snap.Thickness = 1
+        -- Head Dot
+        local headDot = drawings[player].HeadDot
+        headDot.Visible = flags[prefix.."headdot"] or false
+        if flags[prefix.."headdot"] then
+            local headPos, headOnScreen = Camera:WorldToViewportPoint(head.Position)
+            headDot.Position = Vector2.new(headPos.X, headPos.Y)
+            headDot.Radius = 6
+            headDot.Color = flags[prefix.."headdotcolor"] or Color3.new(1, 0, 0)
+            headDot.Filled = false
+            headDot.Transparency = 1
+        end
+        -- Skeleton
+        if flags[prefix.."skeleton"] then
+            local joints = {}
+            for _, joint in ipairs(char:GetDescendants()) do
+                if joint:IsA("Motor6D") and joint.Part0 and joint.Part1 and joint.Part0:IsA("BasePart") and joint.Part1:IsA("BasePart") then
+                    table.insert(joints, joint)
+                end
+            end
+            if #joints == 0 then
+                local r6pairs = {
+                    {"Head", "Torso"},
+                    {"Torso", "Left Arm"},
+                    {"Torso", "Right Arm"},
+                    {"Torso", "Left Leg"},
+                    {"Torso", "Right Leg"},
+                }
+                for _, pair in ipairs(r6pairs) do
+                    local a, b = char:FindFirstChild(pair[1]), char:FindFirstChild(pair[2])
+                    if a and b and a:IsA("BasePart") and b:IsA("BasePart") then
+                        table.insert(joints, {Part0=a, Part1=b})
+                    end
+                end
+            end
+            if not drawings[player].Skeleton or #drawings[player].Skeleton ~= #joints then
+                for _, line in pairs(drawings[player].Skeleton or {}) do pcall(function() line:Remove() end) end
+                drawings[player].Skeleton = {}
+                for i = 1, #joints do
+                    local line = Drawing.new("Line")
+                    line.Color = flags[prefix.."skeletoncolor"] or Color3.fromRGB(236, 251, 136)
+                    line.Thickness = 2
+                    line.Transparency = 1
+                    line.Visible = true
+                    table.insert(drawings[player].Skeleton, line)
+                end
+            end
+            for i, joint in ipairs(joints) do
+                local part0, part1 = joint.Part0, joint.Part1
+                if type(joint) == "table" and not joint.ClassName then
+                    part0, part1 = joint["Part0"], joint["Part1"]
+                end
+                if part0 and part1 and part0:IsA("BasePart") and part1:IsA("BasePart") then
+                    local aPos, aOn = Camera:WorldToViewportPoint(part0.Position)
+                    local bPos, bOn = Camera:WorldToViewportPoint(part1.Position)
+                    local line = drawings[player].Skeleton[i]
+                    if aOn and bOn and line then
+                        line.From = Vector2.new(aPos.X, aPos.Y)
+                        line.To = Vector2.new(bPos.X, bPos.Y)
+                        line.Visible = true
+                        line.Color = flags[prefix.."skeletoncolor"] or Color3.fromRGB(236, 251, 136)
+                    elseif line then
+                        line.Visible = false
+                    end
+                end
+            end
+        else
+            for _, line in pairs(drawings[player].Skeleton or {}) do pcall(function() line:Remove() end) end
+            drawings[player].Skeleton = {}
+        end
+        -- Chams
+        if flags[prefix.."chams"] then
+            local parts = {}
+            for _, part in ipairs(char:GetChildren()) do
+                if part:IsA("BasePart") then
+                    table.insert(parts, part)
+                end
+            end
+            if not drawings[player].Chams or #drawings[player].Chams ~= #parts then
+                for _, cham in pairs(drawings[player].Chams or {}) do pcall(function() cham:Remove() end) end
+                drawings[player].Chams = {}
+                for i = 1, #parts do
+                    local box = Drawing.new("Square")
+                    box.Color = flags[prefix.."innerchamcolor"] or Color3.fromRGB(100, 0, 0)
+                    box.Filled = true
+                    box.Transparency = 0.6
+                    box.Visible = true
+                    table.insert(drawings[player].Chams, box)
+                end
+            end
+            for i, part in ipairs(parts) do
+                local box = drawings[player].Chams[i]
+                if box then
+                    local cframe = part.CFrame
+                    local size = part.Size
+                    local corners = {}
+                    for _, offset in ipairs({
+                        Vector3.new( size.X/2,  size.Y/2,  size.Z/2),
+                        Vector3.new(-size.X/2,  size.Y/2,  size.Z/2),
+                        Vector3.new( size.X/2, -size.Y/2,  size.Z/2),
+                        Vector3.new(-size.X/2, -size.Y/2,  size.Z/2),
+                        Vector3.new( size.X/2,  size.Y/2, -size.Z/2),
+                        Vector3.new(-size.X/2,  size.Y/2, -size.Z/2),
+                        Vector3.new( size.X/2, -size.Y/2, -size.Z/2),
+                        Vector3.new(-size.X/2, -size.Y/2, -size.Z/2),
+                    }) do
+                        local world = cframe:PointToWorldSpace(offset)
+                        local pos, vis = Camera:WorldToViewportPoint(world)
+                        if vis then table.insert(corners, Vector2.new(pos.X, pos.Y)) end
+                    end
+                    if #corners == 8 then
+                        local min, max = Vector2.new(math.huge, math.huge), Vector2.new(-math.huge, -math.huge)
+                        for _, v in ipairs(corners) do
+                            min = Vector2.new(math.min(min.X, v.X), math.min(min.Y, v.Y))
+                            max = Vector2.new(math.max(max.X, v.X), math.max(max.Y, v.Y))
+                        end
+                        box.Position = min
+                        box.Size = max - min
+                        box.Visible = true
+                        box.Color = flags[prefix.."innerchamcolor"] or Color3.fromRGB(100, 0, 0)
+                    else
+                        box.Visible = false
+                    end
+                end
+            end
+        else
+            for _, cham in pairs(drawings[player].Chams or {}) do pcall(function() cham:Remove() end) end
+            drawings[player].Chams = {}
+        end
+    end
+    -- Cleanup pass: remove drawings for players not in the game anymore
+    for player in pairs(drawings) do
+        if not currentPlayers[player] then
+            removeDrawings(player)
+            healthBarHeights[player] = nil
+        end
+    end
+    -- If both ESP toggles are off, remove all drawings
+    if not flags["enemy_esp"] and not flags["team_esp"] then
+        for player in pairs(drawings) do
+            removeDrawings(player)
+            healthBarHeights[player] = nil
+        end
+    end
+end)
+
+
+legit.open_tab()
